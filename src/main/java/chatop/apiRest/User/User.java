@@ -30,16 +30,16 @@ import lombok.NoArgsConstructor;
 public class User implements UserDetails {
     @Id
     @GeneratedValue
-    Integer id;
+    private Integer id;
     @Basic
     @Column(nullable = false)
-    String username;
+    private String username;
     @Column(nullable = false)
-    String lastname;
-    String firstname;
-    String password;
+    private String lastname;
+    private String firstname;
+    private String password;
     @Enumerated(EnumType.STRING) 
-    Role role;
+    private Role role;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
