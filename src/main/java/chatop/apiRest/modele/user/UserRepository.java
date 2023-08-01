@@ -1,4 +1,4 @@
-package chatop.apiRest.User;
+package chatop.apiRest.modele.user;
 
 import java.util.Optional;
 

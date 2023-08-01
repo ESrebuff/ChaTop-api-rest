@@ -1,4 +1,4 @@
-package chatop.apiRest.User;
+package chatop.apiRest.modele.user;
 
 import java.util.Collection;
 import java.util.List;
@@ -26,15 +26,15 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-@Table(name="users", uniqueConstraints = {@UniqueConstraint(columnNames = {"username"})})
-public class User implements UserDetails {
+@Table(name="users", uniqueConstraints = {@UniqueConstraint(columnNames = {"email"})})
+public class User implements UserDetails{
     @Id
     @GeneratedValue
     Integer id;
     @Basic
-    @Column(nullable = false)
+    @Column(nullable = false, name = "email")
     String username;
-    @Column(nullable = false)
+    @Column(nullable = false, name = "name")
     String firstname;
     String password;
     @Enumerated(EnumType.STRING) 

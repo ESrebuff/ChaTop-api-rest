@@ -7,10 +7,9 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import chatop.apiRest.Jwt.JwtService;
-import chatop.apiRest.User.Role;
-import chatop.apiRest.User.User;
-import chatop.apiRest.User.UserRepository;
-
+import chatop.apiRest.modele.user.Role;
+import chatop.apiRest.modele.user.User;
+import chatop.apiRest.modele.user.UserRepository;
 import lombok.RequiredArgsConstructor;
 
 @Service
