@@ -1,4 +1,4 @@
-package chatop.apiRest.Auth;
+package chatop.apiRest.controller;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -6,6 +6,10 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import chatop.apiRest.Auth.AuthResponse;
+import chatop.apiRest.Auth.AuthService;
+import chatop.apiRest.Auth.LoginRequest;
+import chatop.apiRest.Auth.RegisterRequest;
 import lombok.RequiredArgsConstructor;
 
 @RestController
