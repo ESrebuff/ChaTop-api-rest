@@ -4,7 +4,7 @@ import java.util.NoSuchElementException;
 
 import org.springframework.stereotype.Service;
 
-import chatop.apiRest.modele.user.User;
+import chatop.apiRest.modele.User;
 import chatop.apiRest.repository.UserRepository;
 import lombok.AllArgsConstructor;
 

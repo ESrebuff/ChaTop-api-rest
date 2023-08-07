@@ -1,4 +1,4 @@
-package chatop.apiRest.modele.user;
+package chatop.apiRest.modele;
 
 public enum Role {
     ADMIN,

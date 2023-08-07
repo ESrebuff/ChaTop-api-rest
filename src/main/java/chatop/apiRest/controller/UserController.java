@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import chatop.apiRest.mappers.dtos.UserDto;
-import chatop.apiRest.modele.user.User;
+import chatop.apiRest.modele.User;
 import chatop.apiRest.service.UserService;
 import lombok.AllArgsConstructor;
 

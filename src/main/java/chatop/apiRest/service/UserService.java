@@ -1,6 +1,6 @@
 package chatop.apiRest.service;
 
-import chatop.apiRest.modele.user.User;
+import chatop.apiRest.modele.User;
 
 public interface UserService {
 
