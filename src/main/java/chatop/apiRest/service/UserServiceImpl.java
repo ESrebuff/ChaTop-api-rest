@@ -6,9 +6,12 @@ import org.modelmapper.ModelMapper;
 import org.modelmapper.PropertyMap;
 import org.springframework.stereotype.Service;
 
+import chatop.apiRest.mappers.dtos.RentalDto;
 import chatop.apiRest.mappers.dtos.UserDto;
+import chatop.apiRest.modele.Rental;
 import chatop.apiRest.modele.User;
 import chatop.apiRest.repository.UserRepository;
+import jakarta.annotation.PostConstruct;
 import lombok.AllArgsConstructor;
 
 @Service
@@ -18,28 +21,24 @@ public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
     private final ModelMapper modelMapper;
 
-    @Override
-    public User getUserById(Integer id) {
-        return userRepository.findById(id)
-                .orElseThrow(() -> new NoSuchElementException("Rental not found for id: " + id));
+    @PostConstruct
+    public void configureModelMapper() {
+        modelMapper.createTypeMap(User.class, UserDto.class)
+                .addMapping(User::getUsername, UserDto::setEmail)
+                .addMapping(User::getFirstname, UserDto::setName)
+                .addMapping(User::getCreatedAt, UserDto::setCreated_at)
+                .addMapping(User::getUpdatedAt, UserDto::setUpdated_at);
     }
 
-
-    public UserDto getUserDtoByUser(User user) {
-        modelMapper.typeMap(User.class, UserDto.class)
-                   .addMappings(new PropertyMap<User, UserDto>() {
-                       @Override
-                       protected void configure() {
-                           map().setEmail(source.getUsername());
-                           map().setName(source.getFirstname());
-                           map().setCreated_at(source.getCreatedAt());
-                           map().setUpdated_at(source.getUpdatedAt());
-                       }
-                   });
-        
+    private UserDto mapToRentalDto(User user) {
         return modelMapper.map(user, UserDto.class);
     }
 
-
+    @Override
+    public UserDto getUserById(Integer id) {
+        User user = userRepository.findById(id)
+                .orElseThrow(() -> new NoSuchElementException("Rental not found for id: " + id));
+        return mapToRentalDto(user);
+    }
     
 }

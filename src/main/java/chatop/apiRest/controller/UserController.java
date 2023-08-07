@@ -6,7 +6,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import chatop.apiRest.mappers.dtos.UserDto;
-import chatop.apiRest.modele.User;
 import chatop.apiRest.service.UserService;
 import lombok.AllArgsConstructor;
 
@@ -19,8 +18,7 @@ public class UserController {
 
     @GetMapping("/{id}")
     public UserDto getUserById(@PathVariable Integer id) {
-    User user = userService.getUserById(id);
-    UserDto userDto = userService.getUserDtoByUser(user);
+    UserDto userDto = userService.getUserById(id);
     return userDto;
     }
     

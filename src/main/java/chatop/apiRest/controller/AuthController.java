@@ -50,8 +50,7 @@ public class AuthController {
         if (token != null) {
             String email = jwtService.getUsernameFromToken(token);
             User userRepos = userRepository.findByUsername(email).orElse(null);
-            User user = userService.getUserById(userRepos.getId());
-            UserDto userDto = userService.getUserDtoByUser(user);
+            UserDto userDto = userService.getUserById(userRepos.getId());
             return ResponseEntity.ok(userDto);
         } else {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
