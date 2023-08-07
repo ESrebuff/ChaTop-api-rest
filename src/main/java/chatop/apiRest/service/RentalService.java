@@ -2,18 +2,17 @@ package chatop.apiRest.service;
 
 import java.util.List;
 
+import chatop.apiRest.mappers.dtos.RentalDto;
 import chatop.apiRest.modele.Rental;
 
 public interface RentalService {
     
-    Rental create(Rental rental);
+    RentalDto create(Rental rental, Integer userId);
 
-    List<Rental> getRentals();
+    List<RentalDto> getRentals();
 
-    Rental getRental(Integer id);
+    RentalDto getRental(Integer id);
 
     Rental update(Integer id, Rental rental);
-
-    String delete(Integer id);
 
 }

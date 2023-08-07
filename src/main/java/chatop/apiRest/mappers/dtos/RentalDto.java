@@ -1,5 +1,7 @@
 package chatop.apiRest.mappers.dtos;
 
+import java.time.LocalDateTime;
+
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -15,4 +17,7 @@ public class RentalDto {
     private String picture;
     private String description;
     private Integer owner_id;
+    private LocalDateTime created_at;
+    private LocalDateTime updated_at;
+    
 }

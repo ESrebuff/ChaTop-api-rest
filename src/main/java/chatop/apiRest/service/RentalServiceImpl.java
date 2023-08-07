@@ -2,14 +2,15 @@ package chatop.apiRest.service;
 
 import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.stream.Collectors;
 
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
+import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
+import chatop.apiRest.mappers.dtos.RentalDto;
 import chatop.apiRest.modele.Rental;
-import chatop.apiRest.modele.User;
 import chatop.apiRest.repository.RentalRepository;
+import jakarta.annotation.PostConstruct;
 import lombok.AllArgsConstructor;
 
 @Service
@@ -17,25 +18,41 @@ import lombok.AllArgsConstructor;
 public class RentalServiceImpl implements RentalService {
 
     private final RentalRepository rentalRepository;
+    private final ModelMapper modelMapper;
 
-    @Override
-    public Rental create(Rental rental) {
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        User currentUser = (User) auth.getPrincipal();
-        rental.setOwnerId(currentUser.getId());
+    @PostConstruct
+    public void configureModelMapper() {
+        modelMapper.createTypeMap(Rental.class, RentalDto.class)
+                .addMapping(Rental::getOwnerId, RentalDto::setOwner_id)
+                .addMapping(Rental::getCreatedAt, RentalDto::setCreated_at)
+                .addMapping(Rental::getUpdatedAt, RentalDto::setUpdated_at);
+    }
 
-        return rentalRepository.save(rental);
+    private RentalDto mapToRentalDto(Rental rental) {
+        return modelMapper.map(rental, RentalDto.class);
     }
 
     @Override
-    public List<Rental> getRentals() {
-        return rentalRepository.findAll();
+    public RentalDto create(Rental rental, Integer userId) {
+        rental.setOwnerId(userId);
+        Rental rentalsavec = rentalRepository.save(rental);
+        RentalDto rentalDto = mapToRentalDto(rentalsavec);
+        return rentalDto;
     }
 
     @Override
-    public Rental getRental(Integer id) {
-        return rentalRepository.findById(id)
+    public List<RentalDto> getRentals() {
+        List<Rental> rentals = rentalRepository.findAll();
+        return rentals.stream()
+                .map(this::mapToRentalDto)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public RentalDto getRental(Integer id) {
+        Rental rental = rentalRepository.findById(id)
                 .orElseThrow(() -> new NoSuchElementException("Rental not found for id: " + id));
+        return mapToRentalDto(rental);
     }
 
     @Override
@@ -49,12 +66,6 @@ public class RentalServiceImpl implements RentalService {
                     r.setDescription(r.getDescription());
                     return rentalRepository.save(r);
                 }).orElseThrow(() -> new RuntimeException("Rental not found"));
-    }
-
-    @Override
-    public String delete(Integer id) {
-        rentalRepository.deleteById(id);
-        return "Rental deleted";
     }
 
 }

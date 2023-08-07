@@ -4,7 +4,6 @@ import java.util.NoSuchElementException;
 
 import org.modelmapper.ModelMapper;
 import org.modelmapper.PropertyMap;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import chatop.apiRest.mappers.dtos.UserDto;
