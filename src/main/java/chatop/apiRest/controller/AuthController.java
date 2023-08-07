@@ -6,10 +6,10 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import chatop.apiRest.Auth.AuthResponse;
-import chatop.apiRest.Auth.AuthService;
-import chatop.apiRest.Auth.LoginRequest;
-import chatop.apiRest.Auth.RegisterRequest;
+import chatop.apiRest.mappers.dtos.AuthResponseDto;
+import chatop.apiRest.mappers.dtos.LoginRequestDto;
+import chatop.apiRest.mappers.dtos.RegisterRequestDto;
+import chatop.apiRest.service.AuthServiceImpl;
 import lombok.RequiredArgsConstructor;
 
 @RestController
@@ -17,15 +17,15 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class AuthController {
 
-    private final AuthService authService;
+    private final AuthServiceImpl authService;
 
     @PostMapping(value = "login")
-    public ResponseEntity<AuthResponse> login(@RequestBody LoginRequest request) {
+    public ResponseEntity<AuthResponseDto> login(@RequestBody LoginRequestDto request) {
         return ResponseEntity.ok(authService.login(request));
     }
 
     @PostMapping(value = "register")
-    public ResponseEntity<AuthResponse> register(@RequestBody RegisterRequest request) {
+    public ResponseEntity<AuthResponseDto> register(@RequestBody RegisterRequestDto request) {
         return ResponseEntity.ok(authService.register(request));
     }
 }

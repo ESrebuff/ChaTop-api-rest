@@ -1,4 +1,4 @@
-package chatop.apiRest.Jwt;
+package chatop.apiRest.jsonWebToken;
 
 import java.security.Key;
 import java.util.Date;

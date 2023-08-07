@@ -1,4 +1,4 @@
-package chatop.apiRest.Config;
+package chatop.apiRest.configuration;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -9,8 +9,7 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
-import chatop.apiRest.Jwt.JwtAuthenticationFilter;
-
+import chatop.apiRest.jsonWebToken.JwtAuthenticationFilter;
 import lombok.RequiredArgsConstructor;
 
 @Configuration

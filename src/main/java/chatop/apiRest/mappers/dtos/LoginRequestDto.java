@@ -1,4 +1,4 @@
-package chatop.apiRest.Auth;
+package chatop.apiRest.mappers.dtos;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -7,10 +7,9 @@ import lombok.NoArgsConstructor;
 
 @Data
 @Builder
-@NoArgsConstructor
 @AllArgsConstructor
-public class RegisterRequest {
-    String username;
-    String password;
-    String firstname; 
+@NoArgsConstructor
+public class LoginRequestDto {
+    private String email;
+    private String password; 
 }

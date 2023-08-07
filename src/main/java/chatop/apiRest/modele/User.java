@@ -1,5 +1,6 @@
 package chatop.apiRest.modele;
 
+import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.List;
 
@@ -14,6 +15,7 @@ import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
+import jakarta.persistence.PrePersist;
 import jakarta.persistence.Table;
 import jakarta.persistence.UniqueConstraint;
 import lombok.AllArgsConstructor;
@@ -40,9 +42,17 @@ public class User implements UserDetails{
     String firstname;
 
     String password;
+
+    @Column(name = "created_at")
+    private LocalDateTime createdAt;
     
     @Enumerated(EnumType.STRING) 
     Role role;
+
+    @PrePersist
+    public void prePersist() {
+        createdAt = LocalDateTime.now();
+    }
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
