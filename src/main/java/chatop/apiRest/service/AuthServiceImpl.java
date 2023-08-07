@@ -35,7 +35,6 @@ public class AuthServiceImpl implements AuthService {
 
     }
 
-
     @Override
     public AuthResponseDto register(RegisterRequestDto request) {
         User user = User.builder()

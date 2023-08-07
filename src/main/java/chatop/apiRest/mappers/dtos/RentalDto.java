@@ -8,10 +8,11 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class RentalDto {
+
     private String name;
     private Double surface;
     private Double price;
     private String picture;
     private String description;
-    private UserDto owner;
+    private Integer owner_id;
 }

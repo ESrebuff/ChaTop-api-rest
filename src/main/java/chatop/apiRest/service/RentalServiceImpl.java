@@ -3,9 +3,12 @@ package chatop.apiRest.service;
 import java.util.List;
 import java.util.NoSuchElementException;
 
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import chatop.apiRest.modele.Rental;
+import chatop.apiRest.modele.User;
 import chatop.apiRest.repository.RentalRepository;
 import lombok.AllArgsConstructor;
 
@@ -17,6 +20,10 @@ public class RentalServiceImpl implements RentalService {
 
     @Override
     public Rental create(Rental rental) {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        User currentUser = (User) auth.getPrincipal();
+        rental.setOwnerId(currentUser.getId());
+
         return rentalRepository.save(rental);
     }
 

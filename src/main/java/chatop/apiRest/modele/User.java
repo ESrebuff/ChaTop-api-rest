@@ -32,22 +32,25 @@ import lombok.NoArgsConstructor;
 public class User implements UserDetails{
     @Id
     @GeneratedValue
-    Integer id;
+    private Integer id;
 
     @Basic
     @Column(nullable = false, unique = true, name = "email")
-    String username;
+    private String username;
 
     @Column(nullable = false, name = "name")
-    String firstname;
+    private String firstname;
 
-    String password;
+    private String password;
 
     @Column(name = "created_at")
     private LocalDateTime createdAt;
+
+    @Column(name = "updated_at")
+    private LocalDateTime updatedAt;
     
     @Enumerated(EnumType.STRING) 
-    Role role;
+    private Role role;
 
     @PrePersist
     public void prePersist() {

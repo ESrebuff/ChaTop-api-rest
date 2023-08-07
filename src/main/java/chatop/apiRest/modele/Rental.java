@@ -36,8 +36,7 @@ public class Rental {
     @Column(length = 200)
     private String description;
     
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "owner_id", nullable = false)
-    private User owner;
+    @Column(name = "owner_id")
+    private Integer ownerId;
 
 }
