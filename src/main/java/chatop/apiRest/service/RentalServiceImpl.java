@@ -1,5 +1,7 @@
 package chatop.apiRest.service;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -8,6 +10,7 @@ import java.util.stream.Collectors;
 
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import chatop.apiRest.mappers.dtos.RentalDto;
 import chatop.apiRest.mappers.dtos.RentalUpdateDto;
@@ -78,5 +81,23 @@ public class RentalServiceImpl implements RentalService {
         }
         return null;
     }
+
+    @Override
+    public String uploadPicture(MultipartFile imageFile) {
+
+    String uploadPath = "src/main/resources/static/images/";
+    String fileName = System.currentTimeMillis() + "_" + imageFile.getOriginalFilename();
+    String filePath = uploadPath + fileName;
+
+    try {
+        imageFile.transferTo(new File(filePath));
+    } catch (IOException e) {
+        e.printStackTrace();
+        return null;
+    }
+
+    String imageUrl = "/images/" + fileName;
+        return imageUrl;
+}
 
 }
