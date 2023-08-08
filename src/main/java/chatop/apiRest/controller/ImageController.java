@@ -1,7 +1,5 @@
 package chatop.apiRest.controller;
 
-import org.springframework.core.io.ClassPathResource;
-import org.springframework.core.io.Resource;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.FileCopyUtils;
@@ -22,18 +20,15 @@ public class ImageController {
     @GetMapping("/{name}")
     public ResponseEntity<Object> getPictureByName(@PathVariable String name) throws IOException {
         String imagePath = "D:\\OpenClassrooms D\u00E9veloppeur Full-Stack - Java et Angular\\P3\\Ch\u00E0Top\\ChaTop-api-rest\\src\\main\\resources\\static\\picture\\" + name;
-        System.out.println(imagePath);
         File imageFile = new File(imagePath);
         if (!imageFile.exists()) {
-            System.out.println("fuuckkk");
             return ResponseEntity.notFound().build();
         }
         InputStream inputStream = new FileInputStream(imageFile);
         byte[] imageBytes = FileCopyUtils.copyToByteArray(inputStream);
             String contentType = MediaType.IMAGE_JPEG_VALUE;
-            
             return ResponseEntity.ok()
-            .contentType(MediaType.parseMediaType(contentType))
-            .body(imageBytes);
+                .contentType(MediaType.parseMediaType(contentType))
+                .body(imageBytes);
         }
 }
