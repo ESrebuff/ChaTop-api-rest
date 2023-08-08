@@ -9,8 +9,11 @@ import java.util.NoSuchElementException;
 import java.util.stream.Collectors;
 
 import org.modelmapper.ModelMapper;
-import org.springframework.core.io.ClassPathResource;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.ResourceLoader;
 import org.springframework.stereotype.Service;
+import org.springframework.util.ResourceUtils;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
@@ -27,6 +30,9 @@ public class RentalServiceImpl implements RentalService {
 
     private final RentalRepository rentalRepository;
     private final ModelMapper modelMapper;
+    
+    @Autowired
+    private ResourceLoader resourceLoader;
 
     @PostConstruct
     public void configureModelMapper() {
@@ -87,13 +93,16 @@ public class RentalServiceImpl implements RentalService {
     @Override
     public String uploadPicture(MultipartFile imageFile) {
         try {
-            String uploadPath = new ClassPathResource("static/picture").getFile().getAbsolutePath();
-            System.out.println(uploadPath);
+            String uploadPath = "D:\\OpenClassrooms Développeur Full-Stack - Java et Angular\\P3\\ChàTop\\ChaTop-api-rest\\src\\main\\resources\\static\\picture\\";
             String fileName = System.currentTimeMillis() + "_" + imageFile.getOriginalFilename();
             String filePath = uploadPath + fileName;
+            File pictureDir = ResourceUtils.getFile(uploadPath);
+            if (!pictureDir.exists()) {
+                pictureDir.mkdirs();
+            }
             imageFile.transferTo(new File(filePath));
             String addressAndPort = ServletUriComponentsBuilder.fromCurrentContextPath().build().toUriString();
-            String imageUrl = addressAndPort + "/picture/picture" + fileName;
+            String imageUrl = addressAndPort + "/picture/" + fileName;
             return imageUrl;
         } catch (IOException e) {
             e.printStackTrace();

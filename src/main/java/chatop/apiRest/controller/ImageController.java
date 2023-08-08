@@ -10,6 +10,8 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
@@ -19,14 +21,14 @@ public class ImageController {
 
     @GetMapping("/{name}")
     public ResponseEntity<Object> getPictureByName(@PathVariable String name) throws IOException {
-        String imagePath = "static/" + name;
-        Resource imageResource = new ClassPathResource(imagePath);
+        String imagePath = "D:\\OpenClassrooms D\u00E9veloppeur Full-Stack - Java et Angular\\P3\\Ch\u00E0Top\\ChaTop-api-rest\\src\\main\\resources\\static\\picture\\" + name;
         System.out.println(imagePath);
-        System.out.println(imageResource);
-        if (!imageResource.exists()) {
+        File imageFile = new File(imagePath);
+        if (!imageFile.exists()) {
+            System.out.println("fuuckkk");
             return ResponseEntity.notFound().build();
         }
-        InputStream inputStream = imageResource.getInputStream();
+        InputStream inputStream = new FileInputStream(imageFile);
         byte[] imageBytes = FileCopyUtils.copyToByteArray(inputStream);
             String contentType = MediaType.IMAGE_JPEG_VALUE;
             
