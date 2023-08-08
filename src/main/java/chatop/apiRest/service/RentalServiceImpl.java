@@ -35,8 +35,8 @@ public class RentalServiceImpl implements RentalService {
     @Override
     public RentalDto create(Rental rental, Integer userId) {
         rental.setOwnerId(userId);
-        Rental rentalsavec = rentalRepository.save(rental);
-        RentalDto rentalDto = mapToRentalDto(rentalsavec);
+        Rental rentalSaved = rentalRepository.save(rental);
+        RentalDto rentalDto = mapToRentalDto(rentalSaved);
         return rentalDto;
     }
 

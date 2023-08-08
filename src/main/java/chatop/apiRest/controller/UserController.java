@@ -10,7 +10,7 @@ import chatop.apiRest.service.UserService;
 import lombok.AllArgsConstructor;
 
 @RestController
-@RequestMapping("/user")
+@RequestMapping("/api/user")
 @AllArgsConstructor
 public class UserController {
 

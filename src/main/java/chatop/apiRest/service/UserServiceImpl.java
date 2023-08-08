@@ -3,12 +3,9 @@ package chatop.apiRest.service;
 import java.util.NoSuchElementException;
 
 import org.modelmapper.ModelMapper;
-import org.modelmapper.PropertyMap;
 import org.springframework.stereotype.Service;
 
-import chatop.apiRest.mappers.dtos.RentalDto;
 import chatop.apiRest.mappers.dtos.UserDto;
-import chatop.apiRest.modele.Rental;
 import chatop.apiRest.modele.User;
 import chatop.apiRest.repository.UserRepository;
 import jakarta.annotation.PostConstruct;
@@ -40,5 +37,5 @@ public class UserServiceImpl implements UserService {
                 .orElseThrow(() -> new NoSuchElementException("Rental not found for id: " + id));
         return mapToRentalDto(user);
     }
-    
+
 }

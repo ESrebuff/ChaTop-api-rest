@@ -1,9 +1,8 @@
 package chatop.apiRest.controller;
 
 import java.util.List;
-import java.util.stream.Collectors;
+import java.util.Map;
 
-import org.modelmapper.ModelMapper;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -20,12 +19,11 @@ import chatop.apiRest.modele.Rental;
 import chatop.apiRest.modele.User;
 import chatop.apiRest.repository.UserRepository;
 import chatop.apiRest.service.RentalService;
-import jakarta.annotation.PostConstruct;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.AllArgsConstructor;
 
 @RestController
-@RequestMapping("/rentals")
+@RequestMapping("/api/rentals")
 @AllArgsConstructor
 public class RentalController {
 
@@ -34,7 +32,7 @@ public class RentalController {
     private final UserRepository userRepository;
 
     @PostMapping
-    public ResponseEntity<Object> createRental(HttpServletRequest request, @RequestBody Rental rental) {
+    public ResponseEntity<Map<String, String>> createRental(HttpServletRequest request, @RequestBody Rental rental) {
         String authorizationHeader = request.getHeader("Authorization");
         String token = null;
         if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
@@ -44,8 +42,8 @@ public class RentalController {
             String email = jwtService.getUsernameFromToken(token);
             User userRepos = userRepository.findByUsername(email).orElse(null);
             Integer userId = userRepos.getId();
-            RentalDto rentalDtoSaved = rentalService.create(rental, userId);
-            return ResponseEntity.ok(rentalDtoSaved);
+            rentalService.create(rental, userId);
+            return ResponseEntity.ok(Map.of("message", "Rental created !"));
         } else {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
@@ -67,13 +65,13 @@ public class RentalController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<String> update(@PathVariable Integer id, @RequestBody Rental rental) {
+    public ResponseEntity<Map<String, String>> update(@PathVariable Integer id, @RequestBody Rental rental) {
         // TODO ajouter une couche de sécuriter, si c'est l'utilsiateur à le même id que le owner id du rental ok sinon nope !
         Rental updatedRental = rentalService.update(id, rental);
         if (updatedRental == null) {
             return ResponseEntity.notFound().build();
         }
-        return ResponseEntity.ok("Rental updated !");
+        return ResponseEntity.ok(Map.of("message", "Rental updated !"));
     }
 
 }
