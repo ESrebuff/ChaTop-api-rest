@@ -11,14 +11,14 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 import chatop.apiRest.jsonWebToken.JwtService;
 import chatop.apiRest.mappers.dtos.RentalDto;
 import chatop.apiRest.mappers.dtos.RentalUpdateDto;
-import chatop.apiRest.mappers.dtos.UserDto;
 import chatop.apiRest.modele.Rental;
 import chatop.apiRest.modele.User;
 import chatop.apiRest.repository.UserRepository;
@@ -39,8 +39,19 @@ public class RentalController {
 
     @PostMapping
     public ResponseEntity<Map<String, String>> createRental(
-        HttpServletRequest request, 
-        @ModelAttribute @Validated Rental rental) {
+            HttpServletRequest request,
+            @RequestParam("name") String name,
+            @RequestParam("surface") Double surface,
+            @RequestParam("price") Double price,
+            @RequestParam("picture") MultipartFile picture,
+            @RequestParam("description") String description) {
+        Rental rental = new Rental();
+        rental.setName(name);
+        rental.setSurface(surface);
+        rental.setPicture(picture.getOriginalFilename());
+        rental.setPrice(price);
+        rental.setDescription(description);
+
         String authorizationHeader = request.getHeader("Authorization");
         String token = null;
         if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {

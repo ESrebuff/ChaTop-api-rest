@@ -1,5 +1,6 @@
 package chatop.apiRest.service;
 
+import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -72,6 +73,7 @@ public class RentalServiceImpl implements RentalService {
                     existingRental.setSurface(rentalUpdateDto.getSurface());
                     existingRental.setPrice(rentalUpdateDto.getPrice());
                     existingRental.setDescription(rentalUpdateDto.getDescription());
+                    existingRental.setUpdatedAt(LocalDateTime.now());
                     return rentalRepository.save(existingRental);
                 })
                 .orElseThrow(() -> new RuntimeException("Rental not found"));
