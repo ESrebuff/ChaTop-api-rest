@@ -12,10 +12,11 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 import chatop.apiRest.jsonWebToken.JwtService;
-import chatop.apiRest.mappers.dtos.CreateRentalRequest;
 import chatop.apiRest.mappers.dtos.RentalDto;
 import chatop.apiRest.mappers.dtos.RentalUpdateDto;
 import chatop.apiRest.modele.Rental;
@@ -35,37 +36,37 @@ public class RentalController {
     private final UserRepository userRepository;
 
     @PostMapping
-    public CreateRentalRequest createRental(
+    public ResponseEntity<Object> createRental(
             HttpServletRequest request,
-            @ModelAttribute @Validated CreateRentalRequest createRentalRequest
-            ) {
+            @RequestParam("name") String name,
+            @RequestParam("surface") Double surface,
+            @RequestParam("price") Double price,
+            @RequestParam("picture") MultipartFile picture,
+            @RequestParam("description") String description) {
         String authorizationHeader = request.getHeader("Authorization");
         String token = null;
         if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
             token = authorizationHeader.substring(7);
         }
-
-        return createRentalRequest;
-        // if (token != null) {
-        //     String email = jwtService.getUsernameFromToken(token);
-        //     User userRepos = userRepository.findByUsername(email).orElse(null);
-        //     Integer userId = userRepos.getId();
-        //     String pictureUrl = rentalService.uploadPicture(createRentalRequest.getImage());
-        //     if (pictureUrl == null) {
-        //         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
-        //     }
-        //     Rental rental = new Rental();
-        //     rental.setName(createRentalRequest.getName());
-        //     rental.setSurface(createRentalRequest.getSurface());
-        //     rental.setPrice(createRentalRequest.getPrice());
-        //     rental.setPicture(pictureUrl);
-        //     rental.setDescription(createRentalRequest.getDescription());
-        //     rentalService.create(rental, userId);
-
-        //     return ResponseEntity.ok(Map.of("message", "Rental created !"));
-        // } else {
-        //     return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
-        // }
+        if (token != null) {
+            String email = jwtService.getUsernameFromToken(token);
+            User userRepos = userRepository.findByUsername(email).orElse(null);
+            Integer userId = userRepos.getId();
+            String pictureUrl = rentalService.uploadPicture(picture);
+            if (pictureUrl == null) {
+                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+            }
+            Rental rental = new Rental();
+            rental.setName(name);
+            rental.setSurface(surface);
+            rental.setPrice(price);
+            rental.setDescription(description);
+            rental.setPicture(pictureUrl);
+            rentalService.create(rental, userId);
+            return ResponseEntity.ok(Map.of("message", "Rental created !"));
+        } else {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
 
     }
 

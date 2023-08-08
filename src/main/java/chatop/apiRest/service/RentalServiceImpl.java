@@ -9,8 +9,10 @@ import java.util.NoSuchElementException;
 import java.util.stream.Collectors;
 
 import org.modelmapper.ModelMapper;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import chatop.apiRest.mappers.dtos.RentalDto;
 import chatop.apiRest.mappers.dtos.RentalUpdateDto;
@@ -71,33 +73,32 @@ public class RentalServiceImpl implements RentalService {
         RentalDto rentalDto = getRental(id);
         if (rentalDto.getOwner_id().equals(userId)) {
             return rentalRepository.findById(id).map(existingRental -> {
-                    existingRental.setName(rentalUpdateDto.getName());
-                    existingRental.setSurface(rentalUpdateDto.getSurface());
-                    existingRental.setPrice(rentalUpdateDto.getPrice());
-                    existingRental.setDescription(rentalUpdateDto.getDescription());
-                    return rentalRepository.save(existingRental);
-                })
-                .orElseThrow(() -> new RuntimeException("Rental not found"));
+                existingRental.setName(rentalUpdateDto.getName());
+                existingRental.setSurface(rentalUpdateDto.getSurface());
+                existingRental.setPrice(rentalUpdateDto.getPrice());
+                existingRental.setDescription(rentalUpdateDto.getDescription());
+                return rentalRepository.save(existingRental);
+            })
+                    .orElseThrow(() -> new RuntimeException("Rental not found"));
         }
         return null;
     }
 
     @Override
     public String uploadPicture(MultipartFile imageFile) {
-
-    String uploadPath = "src/main/resources/static/images/";
-    String fileName = System.currentTimeMillis() + "_" + imageFile.getOriginalFilename();
-    String filePath = uploadPath + fileName;
-
-    try {
-        imageFile.transferTo(new File(filePath));
-    } catch (IOException e) {
-        e.printStackTrace();
-        return null;
+        try {
+            String uploadPath = new ClassPathResource("static/picture").getFile().getAbsolutePath();
+            System.out.println(uploadPath);
+            String fileName = System.currentTimeMillis() + "_" + imageFile.getOriginalFilename();
+            String filePath = uploadPath + fileName;
+            imageFile.transferTo(new File(filePath));
+            String addressAndPort = ServletUriComponentsBuilder.fromCurrentContextPath().build().toUriString();
+            String imageUrl = addressAndPort + "/picture/picture" + fileName;
+            return imageUrl;
+        } catch (IOException e) {
+            e.printStackTrace();
+            return null;
+        }
     }
-
-    String imageUrl = "/images/" + fileName;
-        return imageUrl;
-}
 
 }
