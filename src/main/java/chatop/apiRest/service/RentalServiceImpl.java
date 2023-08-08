@@ -1,6 +1,8 @@
 package chatop.apiRest.service;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.stream.Collectors;
 
@@ -8,6 +10,7 @@ import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
 import chatop.apiRest.mappers.dtos.RentalDto;
+import chatop.apiRest.mappers.dtos.RentalUpdateDto;
 import chatop.apiRest.modele.Rental;
 import chatop.apiRest.repository.RentalRepository;
 import jakarta.annotation.PostConstruct;
@@ -41,11 +44,16 @@ public class RentalServiceImpl implements RentalService {
     }
 
     @Override
-    public List<RentalDto> getRentals() {
+    public Map<String, List<RentalDto>> getRentals() {
         List<Rental> rentals = rentalRepository.findAll();
-        return rentals.stream()
+        List<RentalDto> rentalDtos = rentals.stream()
                 .map(this::mapToRentalDto)
                 .collect(Collectors.toList());
+
+        Map<String, List<RentalDto>> response = new HashMap<>();
+        response.put("rentals", rentalDtos);
+
+        return response;
     }
 
     @Override
@@ -56,16 +64,19 @@ public class RentalServiceImpl implements RentalService {
     }
 
     @Override
-    public Rental update(Integer id, Rental rental) {
-        return rentalRepository.findById(id)
-                .map(r -> {
-                    r.setName(r.getName());
-                    r.setSurface(r.getSurface());
-                    r.setPrice(r.getPrice());
-                    r.setPicture(r.getPicture());
-                    r.setDescription(r.getDescription());
-                    return rentalRepository.save(r);
-                }).orElseThrow(() -> new RuntimeException("Rental not found"));
+    public Rental update(Integer id, RentalUpdateDto rentalUpdateDto, Integer userId) {
+        RentalDto rentalDto = getRental(id);
+        if (rentalDto.getOwner_id().equals(userId)) {
+            return rentalRepository.findById(id).map(existingRental -> {
+                    existingRental.setName(rentalUpdateDto.getName());
+                    existingRental.setSurface(rentalUpdateDto.getSurface());
+                    existingRental.setPrice(rentalUpdateDto.getPrice());
+                    existingRental.setDescription(rentalUpdateDto.getDescription());
+                    return rentalRepository.save(existingRental);
+                })
+                .orElseThrow(() -> new RuntimeException("Rental not found"));
+        }
+        return null;
     }
 
 }
