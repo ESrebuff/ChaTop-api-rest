@@ -38,7 +38,9 @@ public class RentalController {
     private final UserService userService;
 
     @PostMapping
-    public ResponseEntity<Map<String, String>> createRental(HttpServletRequest request, @RequestBody Rental rental) {
+    public ResponseEntity<Map<String, String>> createRental(
+        HttpServletRequest request, 
+        @ModelAttribute @Validated Rental rental) {
         String authorizationHeader = request.getHeader("Authorization");
         String token = null;
         if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
