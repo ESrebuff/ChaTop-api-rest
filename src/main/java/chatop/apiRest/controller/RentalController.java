@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -23,18 +24,33 @@ import chatop.apiRest.modele.Rental;
 import chatop.apiRest.modele.User;
 import chatop.apiRest.repository.UserRepository;
 import chatop.apiRest.service.RentalService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.ArraySchema;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.AllArgsConstructor;
 
 @RestController
 @RequestMapping("/api/rentals")
 @AllArgsConstructor
+@SecurityRequirement(name = "bearerAuth")
+@Tag(name = "Rentals")
 public class RentalController {
 
     private final RentalService rentalService;
     private final JwtService jwtService;
     private final UserRepository userRepository;
 
+    @Operation(summary = "Create a rental", description = "Creates a new rental based on the provided information.")
+    @ApiResponses({
+            @ApiResponse(description = "Rental created !", responseCode = "200", content = @Content),
+            @ApiResponse(description = "You do not have authorization to access this resource.", responseCode = "403", content = @Content),
+    })
     @PostMapping
     public ResponseEntity<Object> createRental(
             HttpServletRequest request,
@@ -67,14 +83,24 @@ public class RentalController {
         } else {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
-
     }
 
+    @Operation(summary = "Get list of rentals", description = "Retrieves a list of rentals.")
+    @ApiResponses({
+            @ApiResponse(description = "List of rentals retrieved successfully.", responseCode = "200", content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE, array = @ArraySchema(schema = @Schema(implementation = RentalDto.class)))),
+            @ApiResponse(description = "You do not have authorization to access this resource.", responseCode = "403", content = @Content),
+    })
     @GetMapping
     public Map<String, List<RentalDto>> getRentals() {
         return rentalService.getRentals();
     }
 
+    @Operation(summary = "Retrieve a rental by ID", description = "Retrieves detailed information about a rental based on their ID.")
+    @ApiResponses({
+            @ApiResponse(description = "Rental information retrieved successfully.", responseCode = "200", content = @Content(mediaType = "application/json", schema = @Schema(implementation = RentalDto.class))),
+            @ApiResponse(description = "You do not have authorization to access this resource.", responseCode = "403", content = @Content),
+            @ApiResponse(description = "The requested user was not found.", responseCode = "404", content = @Content)
+    })
     @GetMapping("/{id}")
     public ResponseEntity<RentalDto> getRental(@PathVariable Integer id) {
         RentalDto rentalDto = rentalService.getRental(id);
@@ -84,6 +110,12 @@ public class RentalController {
         return ResponseEntity.ok(rentalDto);
     }
 
+    @Operation(summary = "Update a rental", description = "Updates detailed information about a rental based on its ID.")
+    @ApiResponses({
+            @ApiResponse(description = "Rental updated !", responseCode = "200", content = @Content),
+            @ApiResponse(description = "You do not have authorization to access this resource.", responseCode = "403", content = @Content),
+            @ApiResponse(description = "The requested rental was not found.", responseCode = "404", content = @Content)
+    })
     @PutMapping("/{id}")
     public ResponseEntity<Map<String, String>> update(
             HttpServletRequest request,

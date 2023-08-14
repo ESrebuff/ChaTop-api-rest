@@ -1,6 +1,7 @@
 package chatop.apiRest.controller;
 
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -17,12 +18,20 @@ import chatop.apiRest.modele.User;
 import chatop.apiRest.repository.UserRepository;
 import chatop.apiRest.service.AuthServiceImpl;
 import chatop.apiRest.service.UserService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 
 @RestController
 @RequestMapping("/api/auth")
 @RequiredArgsConstructor
+@Tag(name = "Authentication")
 public class AuthController {
 
     private final AuthServiceImpl authService;
@@ -30,16 +39,32 @@ public class AuthController {
     private final UserRepository userRepository;
     private final UserService userService;
 
+    @Operation(summary = "User login", description = "Logs in a user based on the provided login request.")
+    @ApiResponses({
+            @ApiResponse(description = "User logged in successfully.", responseCode = "200", content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE, schema = @Schema(implementation = AuthResponseDto.class))),
+            @ApiResponse(description = "You do not have authorization to access this resource.", responseCode = "403", content = @Content),
+    })
     @PostMapping(value = "login")
     public ResponseEntity<AuthResponseDto> login(@RequestBody LoginRequestDto request) {
         return ResponseEntity.ok(authService.login(request));
     }
 
+    @Operation(summary = "Register a new user", description = "Registers a new user based on the provided registration request.")
+    @ApiResponses({
+            @ApiResponse(description = "User registered successfully.", responseCode = "200", content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE, schema = @Schema(implementation = AuthResponseDto.class))),
+            @ApiResponse(description = "You do not have authorization to access this resource.", responseCode = "403", content = @Content),
+    })
     @PostMapping(value = "register")
     public ResponseEntity<AuthResponseDto> register(@RequestBody RegisterRequestDto request) {
         return ResponseEntity.ok(authService.register(request));
     }
 
+    @SecurityRequirement(name = "bearerAuth")
+    @Operation(summary = "Get current user's information", description = "Retrieves information about the currently authenticated user.")
+    @ApiResponses({
+            @ApiResponse(description = "User information retrieved successfully.", responseCode = "200", content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE, schema = @Schema(implementation = UserDto.class))),
+            @ApiResponse(description = "You do not have authorization to access this resource.", responseCode = "403", content = @Content)
+    })
     @GetMapping("/me")
     public ResponseEntity<UserDto> getCurrentUser(HttpServletRequest request) {
         String authorizationHeader = request.getHeader("Authorization");

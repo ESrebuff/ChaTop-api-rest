@@ -5,7 +5,6 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.NoSuchElementException;
 import java.util.stream.Collectors;
 
 import org.modelmapper.ModelMapper;
@@ -63,15 +62,20 @@ public class RentalServiceImpl implements RentalService {
 
     @Override
     public RentalDto getRental(Integer id) {
-        Rental rental = rentalRepository.findById(id)
-                .orElseThrow(() -> new NoSuchElementException("Rental not found for id: " + id));
-        return mapToRentalDto(rental);
+        Rental rental = rentalRepository.findById(id).orElse(null);
+        if (rental != null) {
+            return mapToRentalDto(rental);
+        }
+        return null;
     }
 
     @Override
     public Rental update(Integer id, RentalUpdateDto rentalUpdateDto, Integer userId) {
         RentalDto rentalDto = getRental(id);
-        if (rentalDto.getOwner_id().equals(userId)) {
+        if (rentalDto == null) {
+            return null;
+        }
+        else if (rentalDto.getOwner_id().equals(userId)) {
             return rentalRepository.findById(id).map(existingRental -> {
                 existingRental.setName(rentalUpdateDto.getName());
                 existingRental.setSurface(rentalUpdateDto.getSurface());
@@ -79,7 +83,7 @@ public class RentalServiceImpl implements RentalService {
                 existingRental.setDescription(rentalUpdateDto.getDescription());
                 return rentalRepository.save(existingRental);
             })
-                    .orElseThrow(() -> new RuntimeException("Rental not found"));
+                    .orElse(null);
         }
         return null;
     }
@@ -87,6 +91,9 @@ public class RentalServiceImpl implements RentalService {
     @Override
     public String uploadPicture(MultipartFile imageFile) {
         try {
+            if (imageFile.getSize() > 10485760) { // 10 MB to bytes
+                throw new IOException("File size exceeds the limit.");
+            }
             String uploadPath = "D:\\OpenClassrooms Développeur Full-Stack - Java et Angular\\P3\\ChàTop\\ChaTop-api-rest\\src\\main\\resources\\static\\picture\\";
             String fileName = System.currentTimeMillis() + "_" + imageFile.getOriginalFilename();
             String filePath = uploadPath + fileName;
