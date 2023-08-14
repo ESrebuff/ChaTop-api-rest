@@ -4,6 +4,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
@@ -29,12 +30,13 @@ public class SecurityConfig {
                         .requestMatchers(
                                 "/api/auth/login", 
                                 "/api/auth/register", 
-                                "/swagger-ui-custom.html",
-                                "/v2/api-docs",
+                                "/swagger-ui/**",
+                                "/v3/api-docs",
+                                "/v3/api-docs/**",
                                 "/swagger-resources/**",
                                 "/swagger-ui.html",
-                                "/webjars/**",
-                                /* Probably not needed */ "/swagger.json")
+                                "api-docs/**",
+                                "/webjars/**")
                         .permitAll()
                         .anyRequest().authenticated())
                 .sessionManagement(sessionManager -> sessionManager
@@ -44,5 +46,9 @@ public class SecurityConfig {
                 .build();
 
     }
+
+	public void configure(WebSecurity web) throws Exception {
+		web.ignoring().requestMatchers("/swagger-ui/**", "/v3/api-docs/**");
+	}
 
 }
