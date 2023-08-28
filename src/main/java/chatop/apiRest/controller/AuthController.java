@@ -1,5 +1,8 @@
 package chatop.apiRest.controller;
 
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -38,6 +41,8 @@ public class AuthController {
     private final JwtService jwtService;
     private final UserRepository userRepository;
     private final UserService userService;
+    private final String EMAIL_PATTERN = "^[_A-Za-z0-9-]+(\\.[_A-Za-z0-9-]+)*@[A-Za-z0-9]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$";
+    private final Pattern pattern = Pattern.compile(EMAIL_PATTERN);
 
     @Operation(summary = "User login", description = "Logs in a user based on the provided login request.")
     @ApiResponses({
@@ -56,6 +61,11 @@ public class AuthController {
     })
     @PostMapping(value = "register")
     public ResponseEntity<AuthResponseDto> register(@RequestBody RegisterRequestDto request) {
+        if (!isValidEmail(request.getEmail())) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body(AuthResponseDto.builder()
+                            .build());
+        }
         return ResponseEntity.ok(authService.register(request));
     }
 
@@ -80,5 +90,11 @@ public class AuthController {
         } else {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
+    }
+
+    // Méthode pour valider le format de l'adresse e-mail
+    private boolean isValidEmail(String email) {
+        Matcher matcher = pattern.matcher(email);
+        return matcher.matches();
     }
 }
